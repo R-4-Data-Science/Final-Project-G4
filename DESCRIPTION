@@ -1,12 +1,20 @@
 Package: MultiPathSelection
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Multi-Path Selection Algorithm to Create Linear and Logistic Models 
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Jonah Kennedy
+Maintainer: Jonah Kenendy <jak0110@auburn.edu>
+Description:
+This package enables users to run a multi-path selection algorithm for linear and logistic models. This ability is granted with the following four functions:
+   build_paths()
+Builds models based on the best family AIC.
+   stability()
+Calculates the stability of given models.
+   plausible_models()
+Determines usable models based on AIC and stability.
+   confusion_metrics()
+Provides a confusion matrix for logistic models.
+License: none
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3
