@@ -1,4 +1,4 @@
-###
+#' @export
 # takes list of variable input and returns a list with model and AIC value
 fit_model <- function(variables, x, y, family) {
   #model with one or more predictors
