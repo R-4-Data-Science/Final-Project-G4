@@ -1,73 +1,71 @@
-plausible_models <- function(path_forest, stability_result, Delta = 2, tau = 0.5, threshold, X, y, model_type = "linear") {
+plausible_models <- function(path_forest, pi, Delta = 2, tau = 0.5, threshold = NULL) {
   
-  #stability scores
-  pi <- stability_result$pi
-  
-  #initlization
+  # init
   all_models <- list()
   all_model_ids <- character(0)
   
+  # extract unique models
   for (frontier in path_forest$frontiers) {
     if (nrow(frontier) > 0) {
-      for (i in 1:nrow(frontier)) {
+      for (i in seq_len(nrow(frontier))) {
         mid <- frontier$model_id[i]
         if (!(mid %in% all_model_ids)) {
           all_model_ids <- c(all_model_ids, mid)
           all_models[[mid]] <- list(
-            model_id = mid,
+            model_id  = mid,
             variables = frontier$variables[[i]],
-            aic = frontier$aic[i]
+            aic       = frontier$aic[i]
           )
         }
       }
     }
   }
   
-  #convert to data frame
+  # convert to df
   models_df <- data.frame(
-    model_id = sapply(all_models, function(x) x$model_id),
-    variables = I(lapply(all_models, function(x) x$variables)),
-    aic = sapply(all_models, function(x) x$aic),
+    model_id  = sapply(all_models, `[[`, "model_id"),
+    variables = I(lapply(all_models, `[[`, "variables")),
+    aic       = sapply(all_models, `[[`, "aic"),
     stringsAsFactors = FALSE
   )
   
-  #filter by AIC
+  # AIC filter
   aic_min <- min(models_df$aic)
   models_df <- models_df[models_df$aic <= aic_min + Delta, ]
   
-  #compute average stability 
+  # average stability
   models_df$pi_bar <- sapply(models_df$variables, function(vars) {
-    if (length(vars) == 0) return(0)  # Empty model has no stability
+    if (length(vars) == 0) return(0)
     mean(pi[vars])
   })
   
-  #filter by average stability
+  # filter by stability threshold
   models_df <- models_df[models_df$pi_bar >= tau, ]
   
-  #add model size
+  # number of vars
   models_df$n_vars <- sapply(models_df$variables, length)
   
-  #remove near-duplicates using similarity
+  # remove near-duplicates
   if (!is.null(threshold) && nrow(models_df) > 1) {
     keep_idx <- rep(TRUE, nrow(models_df))
     
-    for (i in 1:(nrow(models_df) - 1)) {
+    for (i in 1:(nrow(models_df)-1)) {
       if (!keep_idx[i]) next
       
       vars_i <- models_df$variables[[i]]
       
-      for (j in (i + 1):nrow(models_df)) {
+      for (j in (i+1):nrow(models_df)) {
         if (!keep_idx[j]) next
         
         vars_j <- models_df$variables[[j]]
         
-        # Compute Jaccard similarity
+        # Jaccard similarity
         intersection <- length(intersect(vars_i, vars_j))
         union <- length(union(vars_i, vars_j))
         jaccard <- if (union == 0) 0 else intersection / union
         
-        # If too similar, keep the one with better (lower) AIC
-        if (thresh >= threshold) {
+        # apply similarity threshold
+        if (jaccard >= threshold) {
           if (models_df$aic[j] < models_df$aic[i]) {
             keep_idx[i] <- FALSE
             break
@@ -79,9 +77,9 @@ plausible_models <- function(path_forest, stability_result, Delta = 2, tau = 0.5
     }
     
     models_df <- models_df[keep_idx, ]
-    }
+  }
   
-  #sort by AIC
+  # sort by AIC
   models_df <- models_df[order(models_df$aic), ]
   rownames(models_df) <- NULL
   
