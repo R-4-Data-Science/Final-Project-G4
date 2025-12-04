@@ -1,3 +1,4 @@
+#' @export
 build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
   
   #convert x to data frame and get variable names
