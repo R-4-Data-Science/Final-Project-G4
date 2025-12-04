@@ -1,1 +1,66 @@
+stability <- function(X, y, B = 100, method = "bootstrap", m, model_type = "linear", K = 5, e = 1e-6, delta = 2, L) {
+  
+  #remove 'AsIs' class if present. Don't know why this is needed but code fails on public data without
+  if ("AsIs" %in% class(X)) {
+    X <- unclass(X)
+  }
+  
+  #initilize
+  X <- as.data.frame(X)
+  predictors <- colnames(X)
+  p <- length(predictors)
+  n <- length(y)
+  Z <- matrix(0, nrow = B, ncol = p)
+  colnames(Z) <- predictors
+
+  #run bootstrap
+  for (b in seq_len(B)) {
+      if (method == "bootstrap") {
+       idx <- sample(n, n, replace = TRUE)
+    } else {
+      idx <- sample(n, m, replace = FALSE)
+    }
+    
+    paths <- build_paths(X[idx, , drop = FALSE], y[idx], model_type, K, e, delta, L)
+    
+    #unique models
+    all_model_ids <- character(0)
+    all_models_list <- list()
+    
+    for (frontier in paths$frontiers) {
+      if (nrow(frontier) > 0) {
+        for (i in 1:nrow(frontier)) {
+          mid <- frontier$model_id[i]
+          if (!(mid %in% all_model_ids)) {
+            all_model_ids <- c(all_model_ids, mid)
+            all_models_list[[mid]] <- frontier$variables[[i]]
+          }
+        }
+      }
+    }
+    
+    n_models <- length(all_models_list)
+    
+    if (n_models > 0) {
+      feature_counts <- integer(p)
+      names(feature_counts) <- predictors
+      
+      for (model_vars in all_models_list) {
+        if (length(model_vars) > 0) {
+          feature_counts[model_vars] <- feature_counts[model_vars] + 1
+        }
+      }
+      
+      Z[b, ] <- feature_counts / n_models
+    }
+  }
+  
+  # Stability scores
+  pi <- colMeans(Z)
+  
+  list(
+    pi = pi, resample_proportions = Z)
+}
+
+
 
