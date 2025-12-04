@@ -1,3 +1,4 @@
+#' @export
 confusion_metrics <- function(y_true, y_prob, cutoff = 0.5) {
   #apply cutoff
   y_pred <- ifelse(y_prob >= cutoff, 1, 0)
