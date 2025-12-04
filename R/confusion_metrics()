@@ -1,1 +1,73 @@
-
+confusion_metrics <- function(y_true, y_prob, cutoff = 0.5) {
+  #apply cutoff
+  y_pred <- ifelse(y_prob >= cutoff, 1, 0)
+  
+  #create confusion matrix
+  confusion <- table(Actual = y_true, Predicted = y_pred)
+  
+  #ensure 2x2 matrix
+  if (nrow(confusion) < 2 || ncol(confusion) < 2) {
+    #create matrix with zeros
+    full_confusion <- matrix(0, nrow = 2, ncol = 2,
+                             dimnames = list(Actual = c("0", "1"),
+                                             Predicted = c("0", "1")))
+    #fill in observed values
+    for (i in rownames(confusion)) {
+      for (j in colnames(confusion)) {
+        full_confusion[i, j] <- confusion[i, j]
+      }
+    }
+    confusion <- full_confusion
+  }
+  
+  #extract counts
+  TN <- confusion["0", "0"]
+  FP <- confusion["0", "1"]
+  FN <- confusion["1", "0"]
+  TP <- confusion["1", "1"]
+  
+  N <- TN + FP + FN + TP
+  
+  #compute metrics
+  prevalence <- (TP + FN) / N
+  accuracy <- (TP + TN) / N
+  
+  #handle division by zero
+  sensitivity <- if ((TP + FN) > 0) TP / (TP + FN) else NA
+  specificity <- if ((TN + FP) > 0) TN / (TN + FP) else NA
+  precision <- if ((TP + FP) > 0) TP / (TP + FP) else NA
+  FDR <- if ((TP + FP) > 0) FP / (TP + FP) else NA
+  
+  #DOR
+  DOR <- if (FN > 0 && FP > 0 && TN > 0) {
+    (TP / FN) / (FP / TN)
+  } else if (FN == 0 && FP == 0) {
+    Inf  # Perfect classifier
+  } else {
+    NA
+  }
+  
+  #metrics vector
+  metrics <- c(
+    prevalence = prevalence,
+    accuracy = accuracy,
+    sensitivity = sensitivity,
+    specificity = specificity,
+    precision = precision,
+    FDR = FDR,
+    DOR = DOR,
+    N = N,
+    TP = TP,
+    TN = TN,
+    FP = FP,
+    FN = FN
+  )
+  
+  #return list
+  result <- list(
+    confusion_matrix = confusion,
+    metrics = metrics,
+    cutoff = cutoff
+  )
+  return(result)
+}
