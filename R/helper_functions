@@ -1,0 +1,25 @@
+###
+#takes list of variable input and returns a list with models and AIC values
+fit_model <- function(variables, X, y, model_type) {
+  #model with one or more predictors
+  formula_str <- paste("y ~", paste(variables, collapse = " + "))
+  formula_obj <- as.formula(formula_str)
+  if (model_type == "linear") {
+    model <- lm(formula_obj, data = X)
+  } else {
+    model <- glm(formula_obj, data = X, family = binomial)
+  }
+  return(list(model = model, aic = AIC(model)))
+}
+
+###
+#builds empty model and returns a list with models and AIC values
+fit_empty_model <- function(y, model_type){
+  #empty model
+  if (model_type == "linear") {
+    model <- lm(y ~ 1)
+  } else {
+    model <- glm(y ~ 1, family = binomial)
+  }
+  return(list(model = model, aic = AIC(model)))
+}
