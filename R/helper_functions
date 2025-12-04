@@ -23,3 +23,10 @@ fit_empty_model <- function(y, model_type){
   }
   return(list(model = model, aic = AIC(model)))
 }
+
+###
+#create unique model identifier
+model_id <- function(variables) {
+  if (length(variables) == 0) return("intercept_only")
+  paste(sort(variables), collapse = "+")
+}
