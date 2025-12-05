@@ -1,0 +1,138 @@
+---
+title: "Diabetes Progression: Multi-Path Selection"
+author: "Group 4"
+output:
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Diabetes Progression: Multi-Path Selection}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  
+GPT Link: https://chatgpt.com/share/6931b7b2-2cd8-8004-bbca-b83dbcf6313a
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+install.packages("remotes", repos = "https://cloud.r-project.org")
+remotes::install_github("R-4-Data-Science/Final-Project-G4")
+library(MultiPathSelection)   # <-- replace with your actual package name
+library(care)          # contains efron2004 diabetes dataset
+library(dplyr)
+
+set.seed(123)
+```
+## 1. Data
+#### Using the Diabetes progression dataset from Efron et. al. (2004).
+```{r}
+data(efron2004)
+df <- as.data.frame(efron2004$x)
+df$y <- efron2004$y
+
+knitr::kable(
+  head(df), 
+  caption = "Clean Preview: 1 Predictor + Outcome"
+)
+```
+#### Split outcome and predictors
+```{r}
+x <- as.data.frame(efron2004$x)
+y <- efron2004$y
+```
+## 2. Train/Test Split
+```{r}
+n <- nrow(x)
+train_idx <- sample(n, floor(0.7 * n))
+
+x_train <- x[train_idx, ]
+y_train <- y[train_idx]
+
+x_test  <- x[-train_idx, ]
+y_test  <- y[-train_idx]
+```
+## 3. Multi-Path Search
+#### we run the multi-path selection using:
+K = 3
+eps = 1e-6  
+delta = 2
+L = 10
+```{r}
+paths <- build_paths(
+x = x_train,
+y = y_train,
+family = "gaussian",
+K = 3,
+eps = 1e-6,
+delta = 2,
+L = 10
+)
+
+paths
+```
+## 4. Stability Selection (B = 50)
+```{r}
+stab <- stability(
+x = x_train,
+y = y_train,
+B = 50,
+resample = "bootstrap",
+family = "gaussian",
+K = 3,
+eps = 1e-6,
+delta = 2,
+L = 10
+)
+
+pi <- stab$pi
+pi
+```
+## 5. Plausible Model Set
+#### we filter models that:
+- Have AIC within Delta = 2
+- and mean stability >=
+```{r}
+plausible <- plausible_models(
+path_forest = paths,
+pi = pi,
+Delta = 2,
+tau = 0.5
+)
+
+plausible
+```
+## 6. Fit the Best Plausible Model
+#### select variables of the top plausible model
+```{r}
+best_vars <- plausible$variables[[1]]
+best_vars
+```
+#### fit final model:
+```{r}
+# Get top plausible model variables
+if (nrow(plausible) == 0 || length(plausible$variables[[1]]) == 0) {
+  # fallback: intercept-only model
+  final_model <- lm(y ~ 1, data = data.frame(y = y_train))
+  message("No variables passed the plausible filter. Fitting intercept-only model.")
+} else {
+  best_vars <- plausible$variables[[1]]
+  
+  # build formula safely
+  formula_str <- paste("y ~", paste(best_vars, collapse = " + "))
+  final_model <- lm(as.formula(formula_str), data = data.frame(y = y_train, x_train))
+}
+
+# View summary
+summary(final_model)
+
+
+```
+## 7. Test-Set Performance
+#### compute MSE on test data
+```{r}
+pred <- predict(final_model, newdata = data.frame(x_test))
+mse_test <- mean((y_test - pred)^2)
+mse_test
+```
+
+```{r}
+knitr::kable(head(df, caption = "First 6 Rows of the Diabetes Dataset"))
+```
