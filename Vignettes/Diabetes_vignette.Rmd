@@ -52,7 +52,7 @@ y_test  <- y[-train_idx]
 ## 3. Multi-Path Search
 #### we run the multi-path selection using:
 K = 3
-eps = 1e-6
+eps = 1e-6  
 delta = 2
 L = 10
 ```{r}
