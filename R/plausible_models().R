@@ -1,3 +1,89 @@
+#' Select Plausible Models from Path Forest
+#'
+#' Filters models from a path forest based on AIC competitiveness, variable
+#' stability, and similarity to identify a set of plausible final models.
+#' This function helps narrow down the many models explored during path building
+#' to a manageable set of high-quality candidates.
+#'
+#' @param path_forest A path forest object returned by \code{\link{build_paths}},
+#'   containing frontiers of models and associated metadata.
+#' @param pi A named numeric vector of stability scores for each variable, typically
+#'   computed by \code{\link{compute_stability}}. Names should match variable names
+#'   in the path forest.
+#' @param Delta A numeric threshold for AIC competitiveness. Only models with
+#'   AIC <= min(AIC) + Delta are retained. Larger values include more models.
+#'   Default is 2.
+#' @param tau A numeric threshold for average variable stability. Only models with
+#'   mean stability score >= tau are retained. Values should be between 0 and 1.
+#'   Default is 0.5.
+#' @param threshold A numeric threshold for Jaccard similarity (0 to 1) used to
+#'   remove near-duplicate models. If two models have Jaccard similarity >= threshold,
+#'   the one with higher AIC is removed. If NULL, no similarity filtering is applied.
+#'   Default is NULL.
+#'
+#' @return A data frame of plausible models, sorted by AIC (best first), with columns:
+#'   \describe{
+#'     \item{model_id}{Unique identifier for the model based on its variable set.}
+#'     \item{variables}{List column containing character vectors of variable names
+#'       in each model.}
+#'     \item{aic}{AIC value for the model.}
+#'     \item{pi_bar}{Average stability score across all variables in the model.}
+#'     \item{n_vars}{Number of variables in the model.}
+#'   }
+#'
+#' @details
+#' The function applies a sequence of filters to identify plausible models:
+#' \enumerate{
+#'   \item \strong{Extract unique models}: Collects all unique models across all
+#'     frontiers in the path forest.
+#'   \item \strong{AIC filter}: Keeps only models within Delta AIC units of the
+#'     best model.
+#'   \item \strong{Stability filter}: Computes average stability (pi_bar) for each
+#'     model and keeps only those with pi_bar >= tau.
+#'   \item \strong{Similarity filter} (if threshold specified): Removes near-duplicate
+#'     models using Jaccard similarity. For similar model pairs, keeps the one with
+#'     lower AIC.
+#' }
+#'
+#' Jaccard similarity between two models is calculated as:
+#' \deqn{J(A,B) = \frac{|A \cap B|}{|A \cup B|}}
+#' where A and B are the variable sets of two models.
+#'
+#' @examples
+#' # Build paths
+#' set.seed(123)
+#' n <- 100
+#' x <- matrix(rnorm(n * 5), ncol = 5)
+#' colnames(x) <- paste0("Var", 1:5)
+#' y <- x[,1] + 2*x[,2] + rnorm(n)
+#'
+#' paths <- build_paths(x, y, family = "gaussian", K = 5, eps = 0.5, delta = 2)
+#'
+#' # Compute stability (example - normally use compute_stability)
+#' pi <- setNames(runif(5, 0.3, 0.9), colnames(x))
+#'
+#' # Select plausible models with default thresholds
+#' plausible <- plausible_models(paths, pi)
+#' print(plausible)
+#'
+#' # More stringent AIC and stability criteria
+#' plausible_strict <- plausible_models(paths, pi, Delta = 1, tau = 0.7)
+#'
+#' # Remove similar models
+#' plausible_diverse <- plausible_models(paths, pi, Delta = 2, tau = 0.5, 
+#'                                       threshold = 0.7)
+#'
+#' # Examine the selected models
+#' for (i in 1:nrow(plausible)) {
+#'   cat("Model", i, ":", paste(plausible$variables[[i]], collapse = ", "), "\n")
+#'   cat("  AIC:", round(plausible$aic[i], 2), 
+#'       "  Avg Stability:", round(plausible$pi_bar[i], 2), "\n\n")
+#' }
+#'
+#' @seealso 
+#'   \code{\link{build_paths}} for creating the path forest,
+#'   \code{\link{compute_stability}} for calculating variable stability scores
+#'
 #' @export
 plausible_models <- function(path_forest, pi, Delta = 2, tau = 0.5, threshold = NULL) {
   
