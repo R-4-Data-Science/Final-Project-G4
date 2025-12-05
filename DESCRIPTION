@@ -3,8 +3,14 @@ Type: Package
 Title: Multi-Path Selection Algorithm to Create Linear and Logistic Models
 Version: 0.1.0
 Authors@R: c(person("Jonah", "Kennedy", role = c("aut","cre"), email = "jak0110@auburn.edu"))
-Description: This package enables users to run a multi-path selection algorithm for linear and logistic models, including functions to build paths, compute stability, select plausible models, and compute confusion metrics.
+Description: This package enables users to run a multi-path selection algorithm 
+    for linear and logistic models, including functions to build paths, compute 
+    stability, select plausible models, and compute confusion metrics.
 License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.3
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
