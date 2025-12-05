@@ -1,5 +1,5 @@
 ---
-title: "Diabetes Progression: Multi-Path Stepwise Selection"
+title: "Diabetes Progression: Multi-Path Selection"
 author: "Group 4"
 output:
   rmarkdown::html_vignette
@@ -18,14 +18,20 @@ remotes::install_github("R-4-Data-Science/Final-Project-G4")
 library(MultiPathSelection)   # <-- replace with your actual package name
 library(care)          # contains efron2004 diabetes dataset
 library(dplyr)
+
 set.seed(123)
 ```
 ## 1. Data
 #### Using the Diabetes progression dataset from Efron et. al. (2004).
 ```{r}
 data(efron2004)
-df <- efron2004
-str(df)
+df <- as.data.frame(efron2004$x)
+df$y <- efron2004$y
+
+knitr::kable(
+  head(df), 
+  caption = "Clean Preview: 1 Predictor + Outcome"
+)
 ```
 #### Split outcome and predictors
 ```{r}
@@ -117,6 +123,7 @@ if (nrow(plausible) == 0 || length(plausible$variables[[1]]) == 0) {
 # View summary
 summary(final_model)
 
+
 ```
 ## 7. Test-Set Performance
 #### compute MSE on test data
@@ -124,4 +131,8 @@ summary(final_model)
 pred <- predict(final_model, newdata = data.frame(x_test))
 mse_test <- mean((y_test - pred)^2)
 mse_test
+```
+
+```{r}
+knitr::kable(head(df, caption = "First 6 Rows of the Diabetes Dataset"))
 ```
