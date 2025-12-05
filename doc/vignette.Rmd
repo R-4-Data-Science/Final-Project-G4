@@ -125,7 +125,7 @@ summary(final_model)
 
 
 ```
-## 7. Test-Set Performance
+## 71. Test-Set Performance
 #### compute MSE on test data
 ```{r}
 pred <- predict(final_model, newdata = data.frame(x_test))
