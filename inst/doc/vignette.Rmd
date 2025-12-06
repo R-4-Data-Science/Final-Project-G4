@@ -15,97 +15,141 @@ GPT Link: https://chatgpt.com/share/6931b7b2-2cd8-8004-bbca-b83dbcf6313a
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 install.packages("remotes", repos = "https://cloud.r-project.org")
 remotes::install_github("R-4-Data-Science/Final-Project-G4")
-library(MultiPathSelection)   # <-- replace with your actual package name
-library(care)          # contains efron2004 diabetes dataset
+library(MultiPathSelection)
+library(care)
 library(dplyr)
-
 set.seed(123)
 ```
+
 ## 1. Data
+
 #### Using the Diabetes progression dataset from Efron et. al. (2004).
+
 ```{r}
 data(efron2004)
 df <- as.data.frame(efron2004$x)
 df$y <- efron2004$y
-
 knitr::kable(
   head(df), 
   caption = "Clean Preview: 1 Predictor + Outcome"
 )
 ```
+
 #### Split outcome and predictors
+
 ```{r}
 x <- as.data.frame(efron2004$x)
 y <- efron2004$y
 ```
+
 ## 2. Train/Test Split
+
 ```{r}
 n <- nrow(x)
 train_idx <- sample(n, floor(0.7 * n))
-
 x_train <- x[train_idx, ]
 y_train <- y[train_idx]
-
 x_test  <- x[-train_idx, ]
 y_test  <- y[-train_idx]
 ```
+
 ## 3. Multi-Path Search
-#### we run the multi-path selection using:
-K = 3
-eps = 1e-6  
-delta = 2
-L = 10
+
+#### We run the multi-path selection using:
+
+- **K = 3**: Maximum number of steps (variables to add) in each path
+- **eps = 1e-6**: Minimum AIC improvement required to add a variable  
+- **delta = 2**: AIC threshold for keeping competitive models
+- **L = 10**: Maximum number of models to retain at each step
+
 ```{r}
 paths <- build_paths(
-x = x_train,
-y = y_train,
-family = "gaussian",
-K = 3,
-eps = 1e-6,
-delta = 2,
-L = 10
+  x = x_train,
+  y = y_train,
+  family = "gaussian",
+  K = 3,
+  eps = 1e-6,
+  delta = 2,
+  L = 10
 )
 
-paths
+# Summary table
+summary_df <- data.frame(
+  Metric = c("Steps Completed", "Total Models Explored", "Number of Variables"),
+  Value = c(paths$meta$n_steps, paths$meta$total_models_explored, paths$meta$n_vars)
+)
+knitr::kable(summary_df, caption = "Multi-Path Search Summary")
 ```
+
 ## 4. Stability Selection (B = 50)
+
+- **B = 50**: Number of bootstrap resamples for stability assessment
+
 ```{r}
 stab <- stability(
-x = x_train,
-y = y_train,
-B = 50,
-resample = "bootstrap",
-family = "gaussian",
-K = 3,
-eps = 1e-6,
-delta = 2,
-L = 10
+  x = x_train,
+  y = y_train,
+  B = 50,
+  resample = "bootstrap",
+  family = "gaussian",
+  K = 3,
+  eps = 1e-6,
+  delta = 2,
+  L = 10
 )
-
 pi <- stab$pi
-pi
+
+# Sort and display
+pi_sorted <- sort(pi, decreasing = TRUE)
+pi_df <- data.frame(
+  Variable = names(pi_sorted),
+  Stability = round(pi_sorted, 3)
+)
+knitr::kable(pi_df, caption = "Variable Stability Scores", row.names = FALSE)
 ```
+
 ## 5. Plausible Model Set
-#### we filter models that:
-- Have AIC within Delta = 2
-- and mean stability >=
+
+#### We filter models that:
+
+- Have AIC within **Delta = 2** of the best model
+- Have mean stability **>= tau = 0.5**
+
 ```{r}
 plausible <- plausible_models(
-path_forest = paths,
-pi = pi,
-Delta = 2,
-tau = 0.5
+  path_forest = paths,
+  pi = pi,
+  Delta = 2,
+  tau = 0.5
 )
 
-plausible
+if (nrow(plausible) > 0) {
+  plausible_display <- plausible
+  plausible_display$variables <- sapply(plausible$variables, paste, collapse = ", ")
+  plausible_display$pi_bar <- round(plausible_display$pi_bar, 3)
+  plausible_display$aic <- round(plausible_display$aic, 2)
+  
+  knitr::kable(plausible_display, caption = "Plausible Models", row.names = FALSE)
+} else {
+  print("No plausible models found.")
+}
 ```
+
 ## 6. Fit the Best Plausible Model
-#### select variables of the top plausible model
+
+#### Select variables of the top plausible model
+
 ```{r}
-best_vars <- plausible$variables[[1]]
-best_vars
+if (nrow(plausible) > 0) {
+  best_vars <- plausible$variables[[1]]
+} else {
+  best_vars <- character(0)
+}
+print(best_vars)
 ```
-#### fit final model:
+
+#### Fit final model:
+
 ```{r}
 # Get top plausible model variables
 if (nrow(plausible) == 0 || length(plausible$variables[[1]]) == 0) {
@@ -122,17 +166,19 @@ if (nrow(plausible) == 0 || length(plausible$variables[[1]]) == 0) {
 
 # View summary
 summary(final_model)
-
-
 ```
+
 ## 7. Test-Set Performance
-#### compute MSE on test data
+
+#### Compute MSE on test data
+
 ```{r}
 pred <- predict(final_model, newdata = data.frame(x_test))
 mse_test <- mean((y_test - pred)^2)
-mse_test
-```
 
-```{r}
-knitr::kable(head(df, caption = "First 6 Rows of the Diabetes Dataset"))
+perf_df <- data.frame(
+  Metric = "Test MSE",
+  Value = round(mse_test, 2)
+)
+knitr::kable(perf_df, caption = "Test Set Performance", row.names = FALSE)
 ```
