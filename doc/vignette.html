@@ -350,62 +350,154 @@ Selection</h1>
 <h4>Using the Diabetes progression dataset from Efron et.
 al. (2004).</h4>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">data</span>(efron2004)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(efron2004<span class="sc">$</span>x)</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>df<span class="sc">$</span>y <span class="ot">&lt;-</span> efron2004<span class="sc">$</span>y</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="fu">head</span>(df), </span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Clean Preview: 1 Predictor + Outcome&quot;</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># The efron2004$x has &#39;AsIs&#39; class which causes issues with as.data.frame</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># We need to remove this class and work with the raw matrix</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>x_matrix <span class="ot">&lt;-</span> <span class="fu">unclass</span>(efron2004<span class="sc">$</span>x)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>y <span class="ot">&lt;-</span> efron2004<span class="sc">$</span>y</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co"># Verify we have the column names</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Column names:&quot;</span>, <span class="fu">colnames</span>(x_matrix), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## Column names: age sex bmi bp s1 s2 s3 s4 s5 s6</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Create display dataframe</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(x_matrix)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>df<span class="sc">$</span>y <span class="ot">&lt;-</span> y</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="fu">head</span>(df), </span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">&quot;Clean Preview: Predictors + Outcome&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>)</span></code></pre></div>
 <table>
-<caption>Clean Preview: 1 Predictor + Outcome</caption>
+<caption>Clean Preview: Predictors + Outcome</caption>
+<colgroup>
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="16%" />
+</colgroup>
 <thead>
 <tr class="header">
-<th align="right">x</th>
+<th align="right">age</th>
+<th align="right">sex</th>
+<th align="right">bmi</th>
+<th align="right">bp</th>
+<th align="right">s1</th>
+<th align="right">s2</th>
+<th align="right">s3</th>
+<th align="right">s4</th>
+<th align="right">s5</th>
+<th align="right">s6</th>
 <th align="right">y</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">0.79959404</td>
-<td align="right">1.06428249</td>
+<td align="right">0.80</td>
+<td align="right">1.06</td>
+<td align="right">1.30</td>
+<td align="right">0.46</td>
+<td align="right">-0.93</td>
+<td align="right">-0.73</td>
+<td align="right">-0.91</td>
+<td align="right">-0.05</td>
+<td align="right">0.42</td>
+<td align="right">-0.37</td>
+<td align="right">-0.01470281</td>
 </tr>
 <tr class="even">
-<td align="right">-0.03952235</td>
-<td align="right">-0.93747437</td>
+<td align="right">-0.04</td>
+<td align="right">-0.94</td>
+<td align="right">-1.08</td>
+<td align="right">-0.55</td>
+<td align="right">-0.18</td>
+<td align="right">-0.40</td>
+<td align="right">1.56</td>
+<td align="right">-0.83</td>
+<td align="right">-1.43</td>
+<td align="right">-1.94</td>
+<td align="right">-1.00052508</td>
 </tr>
 <tr class="odd">
-<td align="right">1.79127703</td>
-<td align="right">1.06428249</td>
+<td align="right">1.79</td>
+<td align="right">1.06</td>
+<td align="right">0.93</td>
+<td align="right">-0.12</td>
+<td align="right">-0.96</td>
+<td align="right">-0.72</td>
+<td align="right">-0.68</td>
+<td align="right">-0.05</td>
+<td align="right">0.06</td>
+<td align="right">-0.54</td>
+<td align="right">-0.14441627</td>
 </tr>
 <tr class="even">
-<td align="right">-1.87032173</td>
-<td align="right">-0.93747437</td>
+<td align="right">-1.87</td>
+<td align="right">-0.94</td>
+<td align="right">-0.24</td>
+<td align="right">-0.77</td>
+<td align="right">0.26</td>
+<td align="right">0.52</td>
+<td align="right">-0.76</td>
+<td align="right">0.72</td>
+<td align="right">0.48</td>
+<td align="right">-0.20</td>
+<td align="right">0.69872119</td>
 </tr>
 <tr class="odd">
-<td align="right">0.11304427</td>
-<td align="right">-0.93747437</td>
+<td align="right">0.11</td>
+<td align="right">-0.94</td>
+<td align="right">-0.76</td>
+<td align="right">0.46</td>
+<td align="right">0.08</td>
+<td align="right">0.33</td>
+<td align="right">0.17</td>
+<td align="right">-0.05</td>
+<td align="right">-0.67</td>
+<td align="right">-0.98</td>
+<td align="right">-0.22224434</td>
 </tr>
 <tr class="even">
-<td align="right">-1.94660503</td>
-<td align="right">-0.93747437</td>
+<td align="right">-1.95</td>
+<td align="right">-0.94</td>
+<td align="right">-0.85</td>
+<td align="right">-0.41</td>
+<td align="right">-1.45</td>
+<td align="right">-1.67</td>
+<td align="right">0.87</td>
+<td align="right">-1.60</td>
+<td align="right">-0.86</td>
+<td align="right">-2.02</td>
+<td align="right">-0.71515547</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="split-outcome-and-predictors" class="section level4">
 <h4>Split outcome and predictors</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(efron2004<span class="sc">$</span>x)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>y <span class="ot">&lt;-</span> efron2004<span class="sc">$</span>y</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(x_matrix)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Verify column names are preserved</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Number of predictors:&quot;</span>, <span class="fu">ncol</span>(x), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## Number of predictors: 10</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Predictor variables:&quot;</span>, <span class="fu">paste</span>(<span class="fu">colnames</span>(x), <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## Predictor variables: age, sex, bmi, bp, s1, s2, s3, s4, s5, s6</code></pre>
 </div>
 </div>
 <div id="traintest-split" class="section level2">
 <h2>2. Train/Test Split</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(x)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(n, <span class="fu">floor</span>(<span class="fl">0.7</span> <span class="sc">*</span> n))</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>x_train <span class="ot">&lt;-</span> x[train_idx, ]</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>y_train <span class="ot">&lt;-</span> y[train_idx]</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>x_test  <span class="ot">&lt;-</span> x[<span class="sc">-</span>train_idx, ]</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>y_test  <span class="ot">&lt;-</span> y[<span class="sc">-</span>train_idx]</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(x)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>train_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(n, <span class="fu">floor</span>(<span class="fl">0.7</span> <span class="sc">*</span> n))</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>x_train <span class="ot">&lt;-</span> x[train_idx, ]</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>y_train <span class="ot">&lt;-</span> y[train_idx]</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>x_test  <span class="ot">&lt;-</span> x[<span class="sc">-</span>train_idx, ]</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>y_test  <span class="ot">&lt;-</span> y[<span class="sc">-</span>train_idx]</span></code></pre></div>
 </div>
 <div id="multi-path-search" class="section level2">
 <h2>3. Multi-Path Search</h2>
@@ -414,30 +506,30 @@ al. (2004).</h4>
 <ul>
 <li><strong>K = 5</strong>: Maximum number of steps allows the algorithm
 to explore models with up to 5 variables</li>
-<li><strong>eps = 0.5</strong>: Requires meaningful AIC improvement of
-at least 0.5 units to continue growing a branch<br />
+<li><strong>eps = 0.01</strong>: Requires very small AIC improvement to
+allow exploration of marginally informative variables<br />
 </li>
-<li><strong>delta = 2</strong>: Keeps all competitive models within 2
-AIC units of the best at each step</li>
-<li><strong>L = 10</strong>: Limits computational cost by retaining only
-the 10 best models per step</li>
+<li><strong>delta = 4</strong>: Keeps all competitive models within 4
+AIC units of the best, allowing diverse model exploration</li>
+<li><strong>L = 15</strong>: Limits computational cost by retaining only
+the 15 best models per step</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>paths <span class="ot">&lt;-</span> <span class="fu">build_paths</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">x =</span> x_train,</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">y =</span> y_train,</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">K =</span> <span class="dv">5</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">eps =</span> <span class="fl">0.5</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="at">delta =</span> <span class="dv">2</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">L =</span> <span class="dv">10</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>)</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># Summary table</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>summary_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="at">Metric =</span> <span class="fu">c</span>(<span class="st">&quot;Steps Completed&quot;</span>, <span class="st">&quot;Total Models Explored&quot;</span>, <span class="st">&quot;Number of Variables&quot;</span>),</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  <span class="at">Value =</span> <span class="fu">c</span>(paths<span class="sc">$</span>meta<span class="sc">$</span>n_steps, paths<span class="sc">$</span>meta<span class="sc">$</span>total_models_explored, paths<span class="sc">$</span>meta<span class="sc">$</span>n_vars)</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>)</span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(summary_df, <span class="at">caption =</span> <span class="st">&quot;Multi-Path Search Summary&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>paths <span class="ot">&lt;-</span> <span class="fu">build_paths</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">x =</span> x_train,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">y =</span> y_train,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">K =</span> <span class="dv">5</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="at">eps =</span> <span class="fl">0.01</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="at">delta =</span> <span class="dv">4</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="at">L =</span> <span class="dv">15</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co"># Summary table</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>summary_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>  <span class="at">Metric =</span> <span class="fu">c</span>(<span class="st">&quot;Steps Completed&quot;</span>, <span class="st">&quot;Total Models Explored&quot;</span>, <span class="st">&quot;Number of Variables&quot;</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>  <span class="at">Value =</span> <span class="fu">c</span>(paths<span class="sc">$</span>meta<span class="sc">$</span>n_steps, paths<span class="sc">$</span>meta<span class="sc">$</span>total_models_explored, paths<span class="sc">$</span>meta<span class="sc">$</span>n_vars)</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>)</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(summary_df, <span class="at">caption =</span> <span class="st">&quot;Multi-Path Search Summary&quot;</span>)</span></code></pre></div>
 <table>
 <caption>Multi-Path Search Summary</caption>
 <thead>
@@ -449,18 +541,115 @@ the 10 best models per step</li>
 <tbody>
 <tr class="odd">
 <td align="left">Steps Completed</td>
-<td align="right">1</td>
+<td align="right">5</td>
 </tr>
 <tr class="even">
 <td align="left">Total Models Explored</td>
-<td align="right">2</td>
+<td align="right">224</td>
 </tr>
 <tr class="odd">
 <td align="left">Number of Variables</td>
-<td align="right">1</td>
+<td align="right">10</td>
 </tr>
 </tbody>
 </table>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Debug: Show all frontiers</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">### Debug: All Frontiers</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## 
+## ### Debug: All Frontiers</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(paths<span class="sc">$</span>frontiers)) {</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Frontier&quot;</span>, i<span class="dv">-1</span>, <span class="st">&quot;:</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">print</span>(paths<span class="sc">$</span>frontiers[[i]])</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>## 
+## Frontier 0 :
+##   step variables      aic       model_id
+## 1    0           887.8028 intercept_only
+## 
+## Frontier 1 :
+##    step variables      aic model_id      parent_id
+## 1     1       age 871.2530      age intercept_only
+## 2     1       sex 889.3662      sex intercept_only
+## 3     1       bmi 736.5705      bmi intercept_only
+## 4     1        bp 824.2966       bp intercept_only
+## 5     1        s1 873.0589       s1 intercept_only
+## 6     1        s2 879.7421       s2 intercept_only
+## 7     1        s3 834.5626       s3 intercept_only
+## 8     1        s4 818.8518       s4 intercept_only
+## 9     1        s5 769.8582       s5 intercept_only
+## 10    1        s6 845.2691       s6 intercept_only
+## 
+## Frontier 2 :
+##    step variables      aic model_id parent_id
+## 26    2   bmi, s5 687.9491   bmi+s5       bmi
+## 21    2   bmi, bp 716.1198   bmi+bp       bmi
+## 25    2   bmi, s4 717.8885   bmi+s4       bmi
+## 24    2   bmi, s3 720.9543   bmi+s3       bmi
+## 27    2   bmi, s6 726.1466   bmi+s6       bmi
+## 2     2  age, bmi 732.0771  age+bmi       age
+## 22    2   bmi, s1 736.5617   bmi+s1       bmi
+## 11    2  sex, bmi 737.9943  bmi+sex       sex
+## 23    2   bmi, s2 738.3954   bmi+s2       bmi
+## 35    2    bp, s5 743.9035    bp+s5        bp
+## 62    2    s3, s5 755.3065    s3+s5        s3
+## 71    2    s4, s5 766.6165    s4+s5        s4
+## 44    2    s1, s5 767.8875    s1+s5        s1
+## 81    2    s5, s6 768.0454    s5+s6        s5
+## 8     2   age, s5 769.6621   age+s5       age
+## 
+## Frontier 3 :
+##    step    variables      aic   model_id parent_id
+## 3     3  bmi, s5, bp 677.8377  bmi+bp+s5    bmi+s5
+## 6     3  bmi, s5, s3 683.6877  bmi+s3+s5    bmi+s5
+## 4     3  bmi, s5, s1 684.1589  bmi+s1+s5    bmi+s5
+## 5     3  bmi, s5, s2 687.7990  bmi+s2+s5    bmi+s5
+## 1     3 bmi, s5, age 688.9897 age+bmi+s5    bmi+s5
+## 8     3  bmi, s5, s6 689.2885  bmi+s5+s6    bmi+s5
+## 7     3  bmi, s5, s4 689.3026  bmi+s4+s5    bmi+s5
+## 2     3 bmi, s5, sex 689.7932 bmi+s5+sex    bmi+s5
+## 13    3  bmi, bp, s3 699.9743  bmi+bp+s3    bmi+bp
+## 14    3  bmi, bp, s4 700.0449  bmi+bp+s4    bmi+bp
+## 21    3  bmi, s4, s2 710.7844  bmi+s2+s4    bmi+s4
+## 16    3  bmi, bp, s6 712.8943  bmi+bp+s6    bmi+bp
+## 32    3  bmi, s3, s6 713.6799  bmi+s3+s6    bmi+s3
+## 24    3  bmi, s4, s6 714.4480  bmi+s4+s6    bmi+s4
+## 25    3 bmi, s3, age 716.1489 age+bmi+s3    bmi+s3
+## 
+## Frontier 4 :
+##    step    variables      aic      model_id parent_id
+## 5     4 bmi, s5,.... 672.3882  bmi+bp+s3+s5 bmi+bp+s5
+## 3     4 bmi, s5,.... 673.1250  bmi+bp+s1+s5 bmi+bp+s5
+## 4     4 bmi, s5,.... 677.3862  bmi+bp+s2+s5 bmi+bp+s5
+## 2     4 bmi, s5,.... 678.2988 bmi+bp+s5+sex bmi+bp+s5
+## 6     4 bmi, s5,.... 678.9119  bmi+bp+s4+s5 bmi+bp+s5
+## 1     4 bmi, s5,.... 679.8076 age+bmi+bp+s5 bmi+bp+s5
+## 7     4 bmi, s5,.... 679.8376  bmi+bp+s5+s6 bmi+bp+s5
+## 11    4 bmi, s5,.... 683.0104  bmi+s1+s3+s5 bmi+s3+s5
+## 18    4 bmi, s5,.... 683.0437  bmi+s1+s2+s5 bmi+s1+s5
+## 12    4 bmi, s5,.... 683.3158  bmi+s2+s3+s5 bmi+s3+s5
+## 20    4 bmi, s5,.... 683.4519  bmi+s1+s4+s5 bmi+s1+s5
+## 9     4 bmi, s5,.... 683.6368 bmi+s3+s5+sex bmi+s3+s5
+## 15    4 bmi, s5,.... 684.2695 age+bmi+s1+s5 bmi+s1+s5
+## 13    4 bmi, s5,.... 684.2797  bmi+s3+s4+s5 bmi+s3+s5
+## 8     4 bmi, s5,.... 684.3175 age+bmi+s3+s5 bmi+s3+s5
+## 
+## Frontier 5 :
+##    step    variables      aic         model_id     parent_id
+## 2     5 bmi, s5,.... 667.9131 bmi+bp+s3+s5+sex  bmi+bp+s3+s5
+## 3     5 bmi, s5,.... 671.3125  bmi+bp+s1+s3+s5  bmi+bp+s3+s5
+## 9     5 bmi, s5,.... 671.3831  bmi+bp+s1+s2+s5  bmi+bp+s1+s5
+## 11    5 bmi, s5,.... 671.5752  bmi+bp+s1+s4+s5  bmi+bp+s1+s5
+## 4     5 bmi, s5,.... 671.6598  bmi+bp+s2+s3+s5  bmi+bp+s3+s5
+## 8     5 bmi, s5,.... 672.9325 bmi+bp+s1+s5+sex  bmi+bp+s1+s5
+## 5     5 bmi, s5,.... 673.0075  bmi+bp+s3+s4+s5  bmi+bp+s3+s5
+## 17    5 bmi, s5,.... 673.9631  bmi+bp+s2+s4+s5  bmi+bp+s2+s5
+## 1     5 bmi, s5,.... 674.2700 age+bmi+bp+s3+s5  bmi+bp+s3+s5
+## 6     5 bmi, s5,.... 674.3791  bmi+bp+s3+s5+s6  bmi+bp+s3+s5
+## 7     5 bmi, s5,.... 674.8035 age+bmi+bp+s1+s5  bmi+bp+s1+s5
+## 12    5 bmi, s5,.... 675.0799  bmi+bp+s1+s5+s6  bmi+bp+s1+s5
+## 23    5 bmi, s5,.... 678.0595 bmi+bp+s4+s5+sex bmi+bp+s5+sex
+## 14    5 bmi, s5,.... 678.1029 bmi+bp+s2+s5+sex  bmi+bp+s2+s5
+## 13    5 bmi, s5,.... 679.2186 age+bmi+bp+s2+s5  bmi+bp+s2+s5</code></pre>
 </div>
 </div>
 <div id="stability-selection-b-50" class="section level2">
@@ -469,26 +658,26 @@ the 10 best models per step</li>
 <li><strong>B = 50</strong>: Uses 50 bootstrap resamples to assess how
 reliably each variable is selected across different data samples</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>stab <span class="ot">&lt;-</span> <span class="fu">stability</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">x =</span> x_train,</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">y =</span> y_train,</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">B =</span> <span class="dv">50</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">resample =</span> <span class="st">&quot;bootstrap&quot;</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">K =</span> <span class="dv">5</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">eps =</span> <span class="fl">0.5</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">delta =</span> <span class="dv">2</span>,</span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">L =</span> <span class="dv">10</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>)</span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>pi <span class="ot">&lt;-</span> stab<span class="sc">$</span>pi</span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co"># Sort and display</span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>pi_sorted <span class="ot">&lt;-</span> <span class="fu">sort</span>(pi, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>pi_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">names</span>(pi_sorted),</span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>  <span class="at">Stability =</span> <span class="fu">round</span>(pi_sorted, <span class="dv">3</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>)</span>
-<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(pi_df, <span class="at">caption =</span> <span class="st">&quot;Variable Stability Scores&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>stab <span class="ot">&lt;-</span> <span class="fu">stability</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="at">x =</span> x_train,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="at">y =</span> y_train,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="at">B =</span> <span class="dv">50</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  <span class="at">resample =</span> <span class="st">&quot;bootstrap&quot;</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>  <span class="at">K =</span> <span class="dv">5</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="at">eps =</span> <span class="fl">0.01</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>  <span class="at">delta =</span> <span class="dv">4</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="at">L =</span> <span class="dv">15</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>)</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>pi <span class="ot">&lt;-</span> stab<span class="sc">$</span>pi</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co"># Sort and display</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>pi_sorted <span class="ot">&lt;-</span> <span class="fu">sort</span>(pi, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>pi_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">names</span>(pi_sorted),</span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a>  <span class="at">Stability =</span> <span class="fu">round</span>(pi_sorted, <span class="dv">3</span>)</span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>)</span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(pi_df, <span class="at">caption =</span> <span class="st">&quot;Variable Stability Scores&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table>
 <caption>Variable Stability Scores</caption>
 <thead>
@@ -500,43 +689,43 @@ reliably each variable is selected across different data samples</li>
 <tbody>
 <tr class="odd">
 <td align="left">bmi</td>
-<td align="right">0.850</td>
+<td align="right">0.757</td>
 </tr>
 <tr class="even">
 <td align="left">s5</td>
-<td align="right">0.722</td>
+<td align="right">0.611</td>
 </tr>
 <tr class="odd">
 <td align="left">bp</td>
-<td align="right">0.511</td>
+<td align="right">0.414</td>
 </tr>
 <tr class="even">
 <td align="left">s3</td>
-<td align="right">0.238</td>
+<td align="right">0.261</td>
 </tr>
 <tr class="odd">
 <td align="left">s1</td>
-<td align="right">0.223</td>
-</tr>
-<tr class="even">
-<td align="left">sex</td>
-<td align="right">0.163</td>
-</tr>
-<tr class="odd">
-<td align="left">s2</td>
-<td align="right">0.048</td>
+<td align="right">0.209</td>
 </tr>
 <tr class="even">
 <td align="left">s4</td>
-<td align="right">0.043</td>
+<td align="right">0.207</td>
+</tr>
+<tr class="odd">
+<td align="left">s2</td>
+<td align="right">0.169</td>
+</tr>
+<tr class="even">
+<td align="left">sex</td>
+<td align="right">0.164</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
-<td align="right">0.032</td>
+<td align="right">0.144</td>
 </tr>
 <tr class="even">
 <td align="left">s6</td>
-<td align="right">0.017</td>
+<td align="right">0.141</td>
 </tr>
 </tbody>
 </table>
@@ -546,29 +735,36 @@ reliably each variable is selected across different data samples</li>
 <div id="we-filter-models-that" class="section level4">
 <h4>We filter models that:</h4>
 <ul>
-<li><strong>Delta = 2</strong>: Retains models within 2 AIC units of the
-best model, following the standard rule that ΔAIC &lt; 2 indicates
-substantial support</li>
-<li><strong>tau = 0.6</strong>: Requires variables to be selected in at
-least 60% of bootstrap samples, ensuring high selection stability</li>
+<li><strong>Delta = 4</strong>: Retains models within 4 AIC units of the
+best model, allowing consideration of multiple competitive
+alternatives</li>
+<li><strong>tau = 0.4</strong>: Requires variables to be selected in at
+least 40% of bootstrap samples, balancing exploration with
+stability</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>plausible <span class="ot">&lt;-</span> <span class="fu">plausible_models</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">path_forest =</span> paths,</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">pi =</span> pi,</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">Delta =</span> <span class="dv">2</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">tau =</span> <span class="fl">0.6</span></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(plausible) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  plausible_display <span class="ot">&lt;-</span> plausible</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  plausible_display<span class="sc">$</span>variables <span class="ot">&lt;-</span> <span class="fu">sapply</span>(plausible<span class="sc">$</span>variables, paste, <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>  plausible_display<span class="sc">$</span>pi_bar <span class="ot">&lt;-</span> <span class="fu">round</span>(plausible_display<span class="sc">$</span>pi_bar, <span class="dv">3</span>)</span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  plausible_display<span class="sc">$</span>aic <span class="ot">&lt;-</span> <span class="fu">round</span>(plausible_display<span class="sc">$</span>aic, <span class="dv">2</span>)</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>  </span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(plausible_display, <span class="at">caption =</span> <span class="st">&quot;Plausible Models&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">&quot;No plausible models found.&quot;</span>)</span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>plausible <span class="ot">&lt;-</span> <span class="fu">plausible_models</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="at">path_forest =</span> paths,</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">pi =</span> pi,</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">Delta =</span> <span class="dv">4</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="at">tau =</span> <span class="fl">0.4</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>)</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co"># Debug: Show what happened during filtering</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">### Debug: Plausible Model Filtering</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## 
+## ### Debug: Plausible Model Filtering</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Total unique models before filtering:&quot;</span>, <span class="fu">length</span>(<span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(paths<span class="sc">$</span>frontiers, <span class="cf">function</span>(f) f<span class="sc">$</span>model_id)))), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## Total unique models before filtering: 71</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(plausible) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  plausible_display <span class="ot">&lt;-</span> plausible</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  plausible_display<span class="sc">$</span>variables <span class="ot">&lt;-</span> <span class="fu">sapply</span>(plausible<span class="sc">$</span>variables, paste, <span class="at">collapse =</span> <span class="st">&quot;, &quot;</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>  plausible_display<span class="sc">$</span>pi_bar <span class="ot">&lt;-</span> <span class="fu">round</span>(plausible_display<span class="sc">$</span>pi_bar, <span class="dv">3</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  plausible_display<span class="sc">$</span>aic <span class="ot">&lt;-</span> <span class="fu">round</span>(plausible_display<span class="sc">$</span>aic, <span class="dv">2</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  </span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(plausible_display, <span class="at">caption =</span> <span class="st">&quot;Plausible Models&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">&quot;No plausible models found.&quot;</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>}</span></code></pre></div>
 <table>
 <caption>Plausible Models</caption>
 <thead>
@@ -582,11 +778,39 @@ least 60% of bootstrap samples, ensuring high selection stability</li>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">NA</td>
-<td align="left"></td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">0</td>
+<td align="left">bmi+bp+s3+s5+sex</td>
+<td align="left">bmi, s5, bp, s3, sex</td>
+<td align="right">667.91</td>
+<td align="right">0.441</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">bmi+bp+s1+s3+s5</td>
+<td align="left">bmi, s5, bp, s3, s1</td>
+<td align="right">671.31</td>
+<td align="right">0.450</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">bmi+bp+s1+s2+s5</td>
+<td align="left">bmi, s5, bp, s1, s2</td>
+<td align="right">671.38</td>
+<td align="right">0.432</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">bmi+bp+s1+s4+s5</td>
+<td align="left">bmi, s5, bp, s1, s4</td>
+<td align="right">671.58</td>
+<td align="right">0.440</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">bmi+bp+s2+s3+s5</td>
+<td align="left">bmi, s5, bp, s3, s2</td>
+<td align="right">671.66</td>
+<td align="right">0.442</td>
+<td align="right">5</td>
 </tr>
 </tbody>
 </table>
@@ -596,58 +820,68 @@ least 60% of bootstrap samples, ensuring high selection stability</li>
 <h2>6. Fit the Best Plausible Model</h2>
 <div id="select-variables-of-the-top-plausible-model" class="section level4">
 <h4>Select variables of the top plausible model</h4>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(plausible) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  best_vars <span class="ot">&lt;-</span> plausible<span class="sc">$</span>variables[[<span class="dv">1</span>]]</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  best_vars <span class="ot">&lt;-</span> <span class="fu">character</span>(<span class="dv">0</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>}</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="fu">print</span>(best_vars)</span></code></pre></div>
-<pre><code>## NULL</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(plausible) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  best_vars <span class="ot">&lt;-</span> plausible<span class="sc">$</span>variables[[<span class="dv">1</span>]]</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>  best_vars <span class="ot">&lt;-</span> <span class="fu">character</span>(<span class="dv">0</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>}</span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a><span class="fu">print</span>(best_vars)</span></code></pre></div>
+<pre><code>## [1] &quot;bmi&quot; &quot;s5&quot;  &quot;bp&quot;  &quot;s3&quot;  &quot;sex&quot;</code></pre>
 </div>
 <div id="fit-final-model" class="section level4">
 <h4>Fit final model:</h4>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Get top plausible model variables</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(plausible) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> <span class="fu">length</span>(plausible<span class="sc">$</span>variables[[<span class="dv">1</span>]]) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="co"># fallback: intercept-only model</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  final_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y_train))</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">&quot;No variables passed the plausible filter. Fitting intercept-only model.&quot;</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  best_vars <span class="ot">&lt;-</span> plausible<span class="sc">$</span>variables[[<span class="dv">1</span>]]</span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  </span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="co"># build formula safely</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>  formula_str <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;y ~&quot;</span>, <span class="fu">paste</span>(best_vars, <span class="at">collapse =</span> <span class="st">&quot; + &quot;</span>))</span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>  final_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">as.formula</span>(formula_str), <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y_train, x_train))</span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>}</span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a></span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co"># View summary</span></span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="fu">summary</span>(final_model)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Get top plausible model variables</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(plausible) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">||</span> <span class="fu">length</span>(plausible<span class="sc">$</span>variables[[<span class="dv">1</span>]]) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  <span class="co"># fallback: intercept-only model</span></span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>  final_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y_train))</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">&quot;No variables passed the plausible filter. Fitting intercept-only model.&quot;</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>  best_vars <span class="ot">&lt;-</span> plausible<span class="sc">$</span>variables[[<span class="dv">1</span>]]</span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>  </span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>  <span class="co"># build formula safely</span></span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>  formula_str <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;y ~&quot;</span>, <span class="fu">paste</span>(best_vars, <span class="at">collapse =</span> <span class="st">&quot; + &quot;</span>))</span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a>  final_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">as.formula</span>(formula_str), <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y_train, x_train))</span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a>}</span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a><span class="co"># View summary</span></span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a><span class="fu">summary</span>(final_model)</span></code></pre></div>
 <pre><code>## 
 ## Call:
-## lm(formula = y ~ 1, data = data.frame(y = y_train))
+## lm(formula = as.formula(formula_str), data = data.frame(y = y_train, 
+##     x_train))
 ## 
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.4775 -0.8419 -0.2063  0.7925  2.5047 
+##      Min       1Q   Median       3Q      Max 
+## -1.93443 -0.53295  0.04963  0.50139  1.82201 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)
-## (Intercept)  0.01002    0.05762   0.174    0.862
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.008272   0.040118   0.206 0.836789    
+## bmi          0.351638   0.048986   7.178 5.47e-12 ***
+## s5           0.267079   0.048017   5.562 5.86e-08 ***
+## bp           0.197824   0.046774   4.229 3.11e-05 ***
+## s3          -0.179390   0.050960  -3.520 0.000497 ***
+## sex         -0.114959   0.045383  -2.533 0.011811 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 1.013 on 308 degrees of freedom</code></pre>
+## Residual standard error: 0.704 on 303 degrees of freedom
+## Multiple R-squared:  0.5248, Adjusted R-squared:  0.5169 
+## F-statistic: 66.92 on 5 and 303 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <div id="test-set-performance" class="section level2">
 <h2>7. Test-Set Performance</h2>
 <div id="compute-mse-on-test-data" class="section level4">
 <h4>Compute MSE on test data</h4>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(final_model, <span class="at">newdata =</span> <span class="fu">data.frame</span>(x_test))</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>mse_test <span class="ot">&lt;-</span> <span class="fu">mean</span>((y_test <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>perf_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">Metric =</span> <span class="st">&quot;Test MSE&quot;</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="at">Value =</span> <span class="fu">round</span>(mse_test, <span class="dv">2</span>)</span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>)</span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(perf_df, <span class="at">caption =</span> <span class="st">&quot;Test Set Performance&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(final_model, <span class="at">newdata =</span> <span class="fu">data.frame</span>(x_test))</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>mse_test <span class="ot">&lt;-</span> <span class="fu">mean</span>((y_test <span class="sc">-</span> pred)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>perf_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>  <span class="at">Metric =</span> <span class="st">&quot;Test MSE&quot;</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>  <span class="at">Value =</span> <span class="fu">round</span>(mse_test, <span class="dv">2</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>)</span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(perf_df, <span class="at">caption =</span> <span class="st">&quot;Test Set Performance&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table>
 <caption>Test Set Performance</caption>
 <thead>
@@ -659,7 +893,7 @@ least 60% of bootstrap samples, ensuring high selection stability</li>
 <tbody>
 <tr class="odd">
 <td align="left">Test MSE</td>
-<td align="right">0.94</td>
+<td align="right">0.51</td>
 </tr>
 </tbody>
 </table>
