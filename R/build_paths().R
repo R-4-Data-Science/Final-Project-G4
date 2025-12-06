@@ -116,25 +116,28 @@ build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
           aic_by_model[[child_id]] <- result$aic
         }
       }
-      
-      best_child_aic <- min(child_aics)
-      
-      for (j in seq_along(available_vars)) {
-        aic_improvement <- parent_aic - child_aics[j]
-        within_delta <- (child_aics[j] - best_child_aic) <= delta
-        improves_enough <- aic_improvement >= eps
-        
-        if (within_delta && improves_enough) {
-          child_vars <- c(parent_vars, available_vars[j])
-          candidate_children[[length(candidate_children) + 1]] <- list(
-            variables = child_vars,
-            aic = child_aics[j],
-            model_id = model_id(child_vars),
-            parent_id = parent_models$model_id[i]
-          )
-        }
+
+    best_child_aic_parent <- min(child_aics)
+    aic_improvement_parent <- parent_aic - best_child_aic_parent
+    
+    # Stop growing this branch if best child doesn't improve enough
+    if (aic_improvement_parent < eps)
+      next
+    
+    # Keep all children within delta of this parent's best child
+    for (j in seq_along(available_vars)) {
+      within_delta <- (child_aics[j] - best_child_aic_parent) <= delta
+      if (within_delta) {
+        child_vars <- c(parent_vars, available_vars[j])
+        candidate_children[[length(candidate_children) + 1]] <- list(
+          variables = child_vars,
+          aic = child_aics[j],
+          model_id = model_id(child_vars),
+          parent_id = parent_models$model_id[i]
+        )
       }
     }
+  }
     
     if (length(candidate_children) == 0) break
     
