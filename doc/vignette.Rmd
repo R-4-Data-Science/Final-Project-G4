@@ -27,33 +27,19 @@ set.seed(123)
 
 ```{r}
 data(efron2004)
-
-# The efron2004$x has 'AsIs' class which causes issues with as.data.frame
-# We need to remove this class and work with the raw matrix
-x_matrix <- unclass(efron2004$x)
-y <- efron2004$y
-
-# Verify we have the column names
-cat("Column names:", colnames(x_matrix), "\n")
-
-# Create display dataframe
-df <- as.data.frame(x_matrix)
-df$y <- y
-
+df <- as.data.frame(efron2004$x)
+df$y <- efron2004$y
 knitr::kable(
   head(df), 
-  caption = "Clean Preview: Predictors + Outcome",
-  digits = 2
+  caption = "Clean Preview: 1 Predictor + Outcome"
 )
 ```
 
 #### Split outcome and predictors
 
 ```{r}
-x <- as.data.frame(x_matrix)
-# Verify column names are preserved
-cat("Number of predictors:", ncol(x), "\n")
-cat("Predictor variables:", paste(colnames(x), collapse = ", "), "\n")
+x <- as.data.frame(efron2004$x)
+y <- efron2004$y
 ```
 
 ## 2. Train/Test Split
@@ -72,9 +58,9 @@ y_test  <- y[-train_idx]
 #### We run the multi-path selection using:
 
 - **K = 5**: Maximum number of steps allows the algorithm to explore models with up to 5 variables
-- **eps = 0.01**: Requires very small AIC improvement to allow exploration of marginally informative variables  
-- **delta = 4**: Keeps all competitive models within 4 AIC units of the best, allowing diverse model exploration
-- **L = 15**: Limits computational cost by retaining only the 15 best models per step
+- **eps = 0.5**: Requires meaningful AIC improvement of at least 0.5 units to continue growing a branch  
+- **delta = 2**: Keeps all competitive models within 2 AIC units of the best at each step
+- **L = 10**: Limits computational cost by retaining only the 10 best models per step
 
 ```{r}
 paths <- build_paths(
@@ -82,9 +68,9 @@ paths <- build_paths(
   y = y_train,
   family = "gaussian",
   K = 5,
-  eps = 0.01,
-  delta = 4,
-  L = 15
+  eps = 0.5,
+  delta = 2,
+  L = 10
 )
 
 # Summary table
@@ -93,13 +79,6 @@ summary_df <- data.frame(
   Value = c(paths$meta$n_steps, paths$meta$total_models_explored, paths$meta$n_vars)
 )
 knitr::kable(summary_df, caption = "Multi-Path Search Summary")
-
-# Debug: Show all frontiers
-cat("\n### Debug: All Frontiers\n")
-for (i in seq_along(paths$frontiers)) {
-  cat("\nFrontier", i-1, ":\n")
-  print(paths$frontiers[[i]])
-}
 ```
 
 ## 4. Stability Selection (B = 50)
@@ -114,9 +93,9 @@ stab <- stability(
   resample = "bootstrap",
   family = "gaussian",
   K = 5,
-  eps = 0.01,
-  delta = 4,
-  L = 15
+  eps = 0.5,
+  delta = 2,
+  L = 10
 )
 pi <- stab$pi
 
@@ -133,20 +112,16 @@ knitr::kable(pi_df, caption = "Variable Stability Scores", row.names = FALSE)
 
 #### We filter models that:
 
-- **Delta = 4**: Retains models within 4 AIC units of the best model, allowing consideration of multiple competitive alternatives
-- **tau = 0.4**: Requires variables to be selected in at least 40% of bootstrap samples, balancing exploration with stability
+- **Delta = 2**: Retains models within 2 AIC units of the best model, following the standard rule that ΔAIC < 2 indicates substantial support
+- **tau = 0.6**: Requires variables to be selected in at least 60% of bootstrap samples, ensuring high selection stability
 
 ```{r}
 plausible <- plausible_models(
   path_forest = paths,
   pi = pi,
-  Delta = 4,
-  tau = 0.4
+  Delta = 2,
+  tau = 0.6
 )
-
-# Debug: Show what happened during filtering
-cat("\n### Debug: Plausible Model Filtering\n")
-cat("Total unique models before filtering:", length(unique(unlist(lapply(paths$frontiers, function(f) f$model_id)))), "\n")
 
 if (nrow(plausible) > 0) {
   plausible_display <- plausible
