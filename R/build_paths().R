@@ -57,7 +57,7 @@
 #'
 #' # Logistic regression example
 #' y_binary <- rbinom(n, 1, plogis(x[,1] + x[,2]))
-#' paths_logit <- build_paths(x, y_binary, family = "binomial", 
+#' paths_logit <- build_paths(x, y_binary, family = "binomial",
 #'                            K = 5, eps = 0.5, delta = 2, L = 10)
 #'
 #' @seealso \code{\link{compute_stability}} for analyzing path stability,
@@ -65,7 +65,7 @@
 #'
 #' @export
 build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
-  
+
   #convert x to data frame and get variable names
   x <- as.data.frame(x)
   var_names <- colnames(x)
@@ -73,11 +73,11 @@ build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
     var_names <- paste0("X", 1:ncol(x))
     colnames(x) <- var_names
   }
-  
+
   #initialize
   frontiers <- list()
   aic_by_model <- list()
-  
+
   #start with empty model S_0
   S_0 <- fit_empty_model(y, family)
   frontiers[[1]] <- data.frame(
@@ -89,25 +89,25 @@ build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
   )
   aic_by_model[[model_id(character(0))]] <- S_0$aic
   parent_best_aic <- S_0$aic
-  
+
   #repeat for K steps
   for (k in 1:K) {
     parent_models <- frontiers[[k]]
     candidate_children <- list()
-    
+
     for (i in 1:nrow(parent_models)) {
       parent_vars <- parent_models$variables[[i]]
       parent_aic <- parent_models$aic[i]
-      
+
       available_vars <- setdiff(var_names, parent_vars)
       if (length(available_vars) == 0) next
-      
+
       child_aics <- numeric(length(available_vars))
-      
+
       for (j in seq_along(available_vars)) {
         child_vars <- c(parent_vars, available_vars[j])
         child_id <- model_id(child_vars)
-        
+
         if (child_id %in% names(aic_by_model)) {
           child_aics[j] <- aic_by_model[[child_id]]
         } else {
@@ -119,14 +119,14 @@ build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
 
     best_child_aic_parent <- min(child_aics)
     aic_improvement_parent <- parent_aic - best_child_aic_parent
-    
+
     # Stop growing this branch if best child doesn't improve enough
     if (aic_improvement_parent < eps)
       next
-    
+
     # Keep all children within delta of this parent's best child
     for (j in seq_along(available_vars)) {
-      within_delta <- (child_aics[j] - best_child_aic_parent) <= delta
+      within_delta <- (child_aics[j] - parent_aic) <= delta
       if (within_delta) {
         child_vars <- c(parent_vars, available_vars[j])
         candidate_children[[length(candidate_children) + 1]] <- list(
@@ -138,9 +138,9 @@ build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
       }
     }
   }
-    
+
     if (length(candidate_children) == 0) break
-    
+
     children_df <- data.frame(
       step = k,
       variables = I(lapply(candidate_children, function(x) x$variables)),
@@ -149,20 +149,20 @@ build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
       parent_id = sapply(candidate_children, function(x) x$parent_id),
       stringsAsFactors = FALSE
     )
-    
+
     children_df <- children_df[!duplicated(children_df$model_id), ]
-    
+
     current_best_aic <- min(children_df$aic)
     if ((parent_best_aic - current_best_aic) < eps) break
-    
+
     if (!is.null(L) && nrow(children_df) > L) {
       children_df <- children_df[order(children_df$aic)[1:L], ]
     }
-    
+
     frontiers[[k + 1]] <- children_df
     parent_best_aic <- current_best_aic
   }
-  
+
   path_forest <- list(
     frontiers = frontiers,
     aic_by_model = aic_by_model,
@@ -178,6 +178,6 @@ build_paths <- function(x, y, family, K, eps, delta, L = NULL) {
       total_models_explored = length(aic_by_model)
     )
   )
-  
+
   return(path_forest)
 }
